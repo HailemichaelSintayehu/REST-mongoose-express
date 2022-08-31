@@ -15,11 +15,10 @@ dishRouter.route('/')
 .get((req,res)=>{
     Dishes.find({})
     .then((dish)=>{
-        res.statusCode =  200;
 
         res.setHeader('Content-Type','application/json');
 
-        res.json(dish);
+        res.status(200).json(dish);
 
     },(err) => next(err))
 
@@ -33,11 +32,9 @@ dishRouter.route('/')
     .then((dish)=>{
         console.log('Dish created',dish);
 
-        res.statusCode = 200;
-
         res.setHeader('Content-Type','application/json');
 
-        res.json(dish);
+        res.status(200).json(dish);
 
     },(err) => next(err))
 
@@ -46,9 +43,9 @@ dishRouter.route('/')
 })
 
 .put((req,res,next)=>{
-    res.statusCode = 403; //operation not supported
+    // res.statusCode = 403; //operation not supported
 
-    res.end("Put operation not supported on /dishes");
+    res.status(403).end("Put operation not supported on /dishes");
 
 })
 
@@ -57,11 +54,10 @@ dishRouter.route('/')
 
     .then((resp)=>{
 
-        res.statusCode = 200;
-
         res.setHeader('Content-Type','application/json');
 
-        res.json(resp);
+        res.status(200).json(resp);
+        
     },(err) => next(err))
 
     .catch((err)=> next(err));
@@ -74,11 +70,10 @@ dishRouter.route('/:dishId')
     Dishes.findById(req.params.dishId)
 
     .then((dish)=>{
-        res.statusCode =  200;
 
         res.setHeader('Content-Type','application/json');
 
-        res.json(dish);
+        res.status(200).json(dish);
 
     },(err) => next(err))
 
@@ -97,18 +92,27 @@ dishRouter.route('/:dishId')
         $set:req.body
     },{new:true})
     .then((dish)=>{
-        
-        res.statusCode = 200;
 
         res.setHeader('Content-Type','application/json');
 
-        res.json(dish);
+        res.status(200).json(dish);
     })
 
 
 })
 .delete((req,res,next)=>{
-    res.end(req.params.dishId + "deleted from the dish list");
+
+    Dishes.findByIdRemove(req.params.dishId)
+    
+    .then((resp)=>{
+
+        res.setHeader('Content-Type','application/json');
+
+        res.status(200).json(resp);
+
+    },(err) => next(err))
+
+    .catch((err)=> next(err));
 });
 
 
