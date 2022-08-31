@@ -13,7 +13,9 @@ dishRouter.use(bodyParser.json());
 dishRouter.route('/')
 
 .get((req,res)=>{
+
     Dishes.find({})
+
     .then((dish)=>{
 
         res.setHeader('Content-Type','application/json');
@@ -88,7 +90,7 @@ dishRouter.route('/:dishId')
 
 })
 .put((req,res,next)=>{
-    Dishes.findByIdUpdate(req.params.dishId,{
+    Dishes.findByIdAndUpdate(req.params.dishId,{
         $set:req.body
     },{new:true})
     .then((dish)=>{
@@ -96,14 +98,15 @@ dishRouter.route('/:dishId')
         res.setHeader('Content-Type','application/json');
 
         res.status(200).json(dish);
-    })
+    },(err)=>next(err))
+    .catch((err)=>next(err));
 
 
 })
 .delete((req,res,next)=>{
 
-    Dishes.findByIdRemove(req.params.dishId)
-    
+    Dishes.findByIdAndRemove(req.params.dishId)
+
     .then((resp)=>{
 
         res.setHeader('Content-Type','application/json');
@@ -114,6 +117,5 @@ dishRouter.route('/:dishId')
 
     .catch((err)=> next(err));
 });
-
 
 module.exports = dishRouter;
