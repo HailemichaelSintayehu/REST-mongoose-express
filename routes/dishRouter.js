@@ -359,7 +359,7 @@ dishRouter.route('/:dishId/comments/:commentId')
 
                 res.status = 200 ;
 
-                res.json(dish);
+                res.json(dish.comments.id(req.params.commentId));
 
             },(err) => next(err))
         }
