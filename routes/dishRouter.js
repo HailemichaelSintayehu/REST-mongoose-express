@@ -32,6 +32,7 @@ dishRouter.route('/')
     Dishes.create(req.body)
 
     .then((dish)=>{
+
         console.log('Dish created',dish);
 
         res.setHeader('Content-Type','application/json');
@@ -45,6 +46,7 @@ dishRouter.route('/')
 })
 
 .put((req,res,next)=>{
+
     // res.statusCode = 403; //operation not supported
 
     res.status(403).end("Put operation not supported on /dishes");
@@ -52,6 +54,7 @@ dishRouter.route('/')
 })
 
 .delete((req,res,next)=>{
+
     Dishes.remove({})
 
     .then((resp)=>{
@@ -69,6 +72,7 @@ dishRouter.route('/')
 dishRouter.route('/:dishId')
 
 .get((req,res)=>{
+
     Dishes.findById(req.params.dishId)
 
     .then((dish)=>{
@@ -84,21 +88,214 @@ dishRouter.route('/:dishId')
 })
 
 .post((req,res,next)=>{
+
     res.statusCode = 403; //operation not supported
 
     res.end("Post operation not supported on /dishes/" + req.params.dishId);
 
 })
 .put((req,res,next)=>{
+
     Dishes.findByIdAndUpdate(req.params.dishId,{
+
         $set:req.body
+
     },{new:true})
+
     .then((dish)=>{
 
         res.setHeader('Content-Type','application/json');
 
         res.status(200).json(dish);
+
     },(err)=>next(err))
+
+    .catch((err)=>next(err));
+
+
+})
+.delete((req,res,next)=>{
+
+    Dishes.findByIdAndRemove(req.params.dishId)
+
+    .then((resp)=>{
+
+        res.setHeader('Content-Type','application/json');
+
+        res.status(200).json(resp);
+
+    },(err) => next(err))
+
+    .catch((err)=> next(err));
+});
+
+dishRouter.route('/dishId/comments')
+
+.get((req,res)=>{
+
+    Dishes.findById(req.params.dishId)
+
+    .then((dish)=>{
+        
+        if(dish != null){
+            
+            res.setHeader('Content-Type','application/json');
+
+            res.status(200).json(dish.comments);
+        }
+        else{
+            err = new Error ('Dish' + req.params.dishId + 'not found');
+
+            err.status = 404;
+
+            return next(err);
+        }
+
+    },(err) => next(err))
+
+    .catch((err)=> next(err));
+
+})
+
+.post((req,res,next)=>{
+
+    Dishes.findById(req.params.dishId)
+
+    .then((dish)=>{
+
+        if(dish != null){
+            
+            dish.comments.push(req.body);
+
+            dish.save()
+
+            .then((dish)=>{
+
+                res.setHeader('Content-Type','application/json');
+
+                res.status = 200 ;
+
+                res.json(dish);
+
+            },(err) => next(err))
+            
+        }
+        else{
+            err = new Error ('Dish' + req.params.dishId + 'not found');
+
+            err.status = 404;
+
+            return next(err);
+        };
+
+    },(err) => next(err))
+
+    .catch((err)=> next(err));
+    
+})
+
+.put((req,res,next)=>{
+    // res.statusCode = 403; //operation not supported
+
+    res.status(403).end("Put operation not supported on /dishes/" + req.params.dishId + '/comments');
+
+})
+
+.delete((req,res,next)=>{
+    Dishes.findById(req.params.dishId)
+
+    .then((dish)=>{
+        
+        if(dish != null){
+            
+            for(var i = (dish.comments.length-1);i >= 0;i--){
+
+                dish.comments.id(dish.comments[i]._id).remove();
+
+            }
+            dish.save()
+             
+            .then((dish)=>{
+
+                res.setHeader('Content-Type','application/json');
+
+                res.status = 200 ;
+
+                res.json(dish);
+
+            },(err) => next(err))
+        }
+        else{
+            err = new Error ('Dish' + req.params.dishId + 'not found');
+
+            err.status = 404;
+
+            return next(err);
+        }
+
+    },(err) => next(err))
+
+    .catch((err)=> next(err));
+    
+});
+
+dishRouter.route('/:dishId/comments/:commentId')
+
+.get((req,res)=>{
+
+    Dishes.findById(req.params.dishId)
+
+    .then((dish)=>{
+
+        if(dish != null && dish.comments.id(req.params.commentId) != null ){
+
+            res.setHeader('Content-Type','application/json');
+
+            res.status(200).json(dish.comments);
+    
+        }
+        else if (dish == null) {
+
+            err = new Error('Dish' + req.params.dishId + 'not Found');
+
+            err.status = 404;
+
+            return next(err);
+            
+        }
+        else{
+            
+        }
+
+    },(err) => next(err))
+
+    .catch((err)=> next(err));
+
+})
+
+.post((req,res,next)=>{
+    res.statusCode = 403; //operation not supported
+
+    res.end("Post operation not supported on /dishes/" + req.params.dishId);
+
+})
+
+.put((req,res,next)=>{
+
+    Dishes.findByIdAndUpdate(req.params.dishId,{
+
+        $set:req.body
+
+    },{new:true})
+
+    .then((dish)=>{
+
+        res.setHeader('Content-Type','application/json');
+
+        res.status(200).json(dish);
+
+    },(err)=>next(err))
+
     .catch((err)=>next(err));
 
 
