@@ -37,12 +37,13 @@ try {
 
    } catch (error) {
 
-    res.status(400).json(promotion)
+    res.status(400).json(error.message)
 
    }
     
 })
 .put((req,res,next)=>{
+
     res.statusCode = 403; //operation not supported
 
     res.end("Put operation not supported on /promotions");
@@ -52,8 +53,16 @@ try {
 
 .delete(async(req,res,next)=>{
 
+    try {
+        
     const promotion = await Promotions.remove({});
-    
+
+    res.status(200).json(promotion);
+
+    } catch (error) {
+
+        res.status(404).json(error.message)
+    }
 
 
 });
@@ -61,7 +70,15 @@ try {
 promoRouter.route('/:promoId')
 
 .get((req,res)=>{
-    res.end('Will send details of the dish!' + req.params.promoId + 'to you');
+    try {
+
+        res.setHeader('Content-Type','application/json');
+        
+    } catch (error) {
+        
+    }
+
+
 })
 
 .post((req,res,next)=>{
