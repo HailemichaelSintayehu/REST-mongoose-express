@@ -12,7 +12,7 @@ dishRouter.use(bodyParser.json());
 
 dishRouter.route('/')
 
-.get((req,res)=>{
+.get((req,res,next)=>{
 
     Dishes.find({})
 
@@ -57,11 +57,11 @@ dishRouter.route('/')
 
     Dishes.remove({})
 
-    .then((resp)=>{
+    .then((dish)=>{
 
         res.setHeader('Content-Type','application/json');
 
-        res.status(200).json(resp);
+        res.status(200).json(dish);
         
     },(err) => next(err))
 
@@ -71,7 +71,7 @@ dishRouter.route('/')
 
 dishRouter.route('/:dishId')
 
-.get((req,res)=>{
+.get((req,res,next)=>{
 
     Dishes.findById(req.params.dishId)
 
@@ -131,7 +131,7 @@ dishRouter.route('/:dishId')
 
 dishRouter.route('/:dishId/comments')
 
-.get((req,res)=>{
+.get((req,res,next)=>{
 
     Dishes.findById(req.params.dishId)
 
@@ -241,7 +241,7 @@ dishRouter.route('/:dishId/comments')
 
 dishRouter.route('/:dishId/comments/:commentId')
 
-.get((req,res)=>{
+.get((req,res,next)=>{
 
     Dishes.findById(req.params.dishId)
 

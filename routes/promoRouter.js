@@ -17,29 +17,45 @@ try {
 
     console.log("the value of promotion in get request",promotion);
 
-    res.setHeader('Content-Type','application/json');
-
     res.status(200).json(promotion);
+
 } catch (error) {
-    res.status(404).json(error);
+
+    res.status(400).json(error.message);
+
 }
 
 })
 
+.post( async(req,res,next)=>{
+   try {
+    const promotion = await Promotions.create(req.body);
 
+    console.log("the value of promotion in post request",promotion);
 
-.post((req,res,next)=>{
-    res.end("Will add the promotion: ",req.body.name + 'with details' + req.body.description);
+    res.status(200).json(promotion);
+
+   } catch (error) {
+
+    res.status(400).json(promotion)
+
+   }
     
 })
 .put((req,res,next)=>{
     res.statusCode = 403; //operation not supported
+
     res.end("Put operation not supported on /promotions");
+
 
 })
 
-.delete((req,res,next)=>{
-    res.end("Delete request delete the promotions");
+.delete(async(req,res,next)=>{
+
+    const promotion = await Promotions.remove({});
+    
+
+
 });
 
 promoRouter.route('/:promoId')
