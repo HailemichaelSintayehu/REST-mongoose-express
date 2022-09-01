@@ -4,20 +4,29 @@ const bodyParser = require('body-parser');
 
 const promoRouter = express.Router();
 
+const Promotions = require('../models/promotions')
+
 promoRouter.use(bodyParser.json());
 
 promoRouter.route('/')
 
-.all((req,res,next)=>{
-    res.statusCode = 200;
-    res.setHeader('Content-Type','text/plain'); 
-    console.log("app.all route");
-    next();
+.get( async (req,res)=>{
+
+try {
+    const promotion = await Promotions.find({});
+
+    console.log("the value of promotion in get request",promotion);
+
+    res.setHeader('Content-Type','application/json');
+
+    res.status(200).json(promotion);
+} catch (error) {
+    res.status(404).json(error);
+}
+
 })
 
-.get((req,res)=>{
-    res.end('Will send all the promotions to you!');
-})
+
 
 .post((req,res,next)=>{
     res.end("Will add the promotion: ",req.body.name + 'with details' + req.body.description);
