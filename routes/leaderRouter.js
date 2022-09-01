@@ -6,22 +6,42 @@ const leaderRouter = express.Router();
 
 leaderRouter.use(bodyParser.json());
 
+const Leaders = require('../models/leaders');
+
 leaderRouter.route('/')
 
-.all((req,res,next)=>{
-    res.statusCode = 200;
-    res.setHeader('Content-Type','text/plain'); 
-    console.log("app.all route");
-    next();
+.get( async(req,res)=>{
+    try {
+
+        const leaders = await Leaders.find({});   
+        
+        res.status(200).json(leaders);
+
+    } catch (error) {
+
+        res.status(404).json(error);
+
+    }
 })
 
-.get((req,res)=>{
-    res.end('Will send all the leaders to you!');
-})
-
-.post((req,res,next)=>{
-    res.end("Will add the leader: ",req.body.name + 'with details' + req.body.description);
+.post(async(req,res,next)=>{
+    try {
+        const leaders = await Leaders.create(req.body);
     
+        console.log("the value of promotion in post request",leaders);
+    
+        res.status(200).json({
+    
+            success:true,
+            leaders:leaders
+            
+    });
+    
+       } catch (error) {
+    
+        res.status(400).json(error.message)
+    
+       }
 })
 .put((req,res,next)=>{
     res.statusCode = 403; //operation not supported
@@ -29,28 +49,91 @@ leaderRouter.route('/')
 
 })
 
-.delete((req,res,next)=>{
-    res.end("Delete request delete the leaders");
+.delete(async(req,res,next)=>{
+    try {
+        
+        const leaders = await Leaders.remove({});
+    
+        res.status(200).json({
+    
+            success:true,
+            promotion:promotion
+            
+    });
+    
+        } catch (error) {
+    
+            res.status(404).json(error.message)
+        }
 });
 
 leaderRouter.route('/:leaderId')
 
-.get((req,res)=>{
-    res.end('Will send details of the leader!' + req.params.leaderId + 'to you');
+.get(async(req,res)=>{
+    try {
+
+        res.setHeader('Content-Type','application/json');
+
+        const leaders = await Leaders.findById(req.params.leaderId);
+
+        res.status(200).json({
+
+            success:true,
+            promotion:promotion
+            
+    });
+
+    } catch (error) {
+
+        res.status(404).json(error.message);
+    }
 })
 
 .post((req,res,next)=>{
     res.statusCode = 403; //operation not supported
     res.end("Post operation not supported on /leaders/" + req.params.leaderId);
 })
-.put((req,res,next)=>{
+.put(async(req,res,next)=>{
 
-    res.write("updating the dish: " + req.params.leaderId + "\n");
-    res.end("Will update the dish:" + req.body.name + "with details: " + req.body.description)
+    try {
+
+        res.setHeader('Content-Type','application/json');
+
+        const leaders = await Leaders.findByIdAndUpdate(req.params.leaderId,{
+
+            $set:req.body
+    
+        },{new:true});  
+
+        res.status(200).json({
+            success:true,
+            promotion:promotion
+            
+    });
+    } catch (error) {
+        res.status(404).json({
+            success:false,
+            error:error.message
+        })
+    }
 
 })
-.delete((req,res,next)=>{
-    res.end(req.params.leaderId + "deleted from the dish list");
+.delete(async(req,res,next)=>{
+    try {
+        const leaders = await Leaders.findByIdAndRemove(req.params.leaderId);
+    
+        res.status(200).json({
+    
+            success:true,
+            leaders:leaders
+            
+    })
+    } catch (error) {
+        res.status(404).json({
+            success:false,
+            error:error.message
+        })
+    }
 });
 
 module.exports = leaderRouter;

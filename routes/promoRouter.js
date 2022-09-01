@@ -138,9 +138,9 @@ promoRouter.route('/:promoId')
 
 
 })
-.delete((req,res,next)=>{
+.delete(async(req,res,next)=>{
 try {
-    const promotion = Promotions.findByIdAndRemove(req.params.promoId);
+    const promotion = await Promotions.findByIdAndRemove(req.params.promoId);
 
     res.status(200).json({
 
@@ -149,7 +149,10 @@ try {
         
 })
 } catch (error) {
-    
+    res.status(404).json({
+        success:false,
+        error:error.message
+    })
 }
 });
 
