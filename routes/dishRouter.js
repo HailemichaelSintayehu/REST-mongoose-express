@@ -129,7 +129,7 @@ dishRouter.route('/:dishId')
     .catch((err)=> next(err));
 });
 
-dishRouter.route('/dishId/comments')
+dishRouter.route('/:dishId/comments')
 
 .get((req,res)=>{
 
@@ -173,7 +173,7 @@ dishRouter.route('/dishId/comments')
 
                 res.setHeader('Content-Type','application/json');
 
-                res.status = 200 ;
+                res.status = 200;
 
                 res.json(dish);
 
@@ -251,7 +251,7 @@ dishRouter.route('/:dishId/comments/:commentId')
 
             res.setHeader('Content-Type','application/json');
 
-            res.status(200).json(dish.comments);
+            res.status(200).json(dish.comments.id(req.params.commentId));
     
         }
         else if (dish == null) {
