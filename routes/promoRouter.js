@@ -17,7 +17,12 @@ try {
 
     console.log("the value of promotion in get request",promotion);
 
-    res.status(200).json(promotion);
+    res.status(200).json({
+
+        success:true,
+        promotion:promotion
+        
+});
 
 } catch (error) {
 
@@ -33,7 +38,12 @@ try {
 
     console.log("the value of promotion in post request",promotion);
 
-    res.status(200).json(promotion);
+    res.status(200).json({
+
+        success:true,
+        promotion:promotion
+        
+});
 
    } catch (error) {
 
@@ -57,7 +67,12 @@ try {
         
     const promotion = await Promotions.remove({});
 
-    res.status(200).json(promotion);
+    res.status(200).json({
+
+        success:true,
+        promotion:promotion
+        
+});
 
     } catch (error) {
 
@@ -69,13 +84,23 @@ try {
 
 promoRouter.route('/:promoId')
 
-.get((req,res)=>{
+.get(async(req,res)=>{
     try {
 
         res.setHeader('Content-Type','application/json');
-        
+
+        const promotion = await Promotions.findById(req.params.promoId);
+
+        res.status(200).json({
+
+            success:true,
+            promotion:promotion
+            
+    });
+
     } catch (error) {
-        
+
+        res.status(404).json(error.message);
     }
 
 
@@ -83,16 +108,49 @@ promoRouter.route('/:promoId')
 
 .post((req,res,next)=>{
     res.statusCode = 403; //operation not supported
-    res.end("Post operation not supported on /dishes/" + req.params.promoId);
+    res.end("Post operation not supported on /promotions/" + req.params.promoId);
 })
-.put((req,res,next)=>{
 
-    res.write("updating the dish: " + req.params.promoId + "\n");
-    res.end("Will update the dish:" + req.body.name + "with details: " + req.body.description)
+.put(async(req,res,next)=>{
+    try {
+
+        res.setHeader('Content-Type','application/json');
+
+        const promotion = await Promotions.findByIdAndUpdate(req.params.promoId,{
+
+            $set:req.body
+    
+        },{new:true});  
+
+        res.status(200).json({
+            success:true,
+            promotion:promotion
+            
+    });
+    } catch (error) {
+        res.status(404).json({
+            success:false,
+            error:error.message
+        })
+    }
+
+    
+
 
 })
 .delete((req,res,next)=>{
-    res.end(req.params.promoId + "deleted from the dish list");
+try {
+    const promotion = Promotions.findByIdAndRemove(req.params.promoId);
+
+    res.status(200).json({
+
+        success:true,
+        promotion:promotion
+        
+})
+} catch (error) {
+    
+}
 });
 
 module.exports = promoRouter;
