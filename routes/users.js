@@ -8,7 +8,6 @@ var passport = require('passport');
 
 const authenticate  = require('../authenticate');
 
-
 var router = express.Router();
 
 router.use(bodyParser.json());
@@ -27,6 +26,7 @@ router.post('/signup',(req,res,next)=>{
       req.body.password ,(err,user) =>{
 
         if(err){
+          
           res.statusCode = 500;
 
           res.setHeader('Content-Type','application/json');
