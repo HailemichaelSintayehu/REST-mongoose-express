@@ -2,9 +2,13 @@ const express = require('express');
 
 const bodyParser = require('body-parser');
 
+const mongoose = require('mongoose');
+
 const promoRouter = express.Router();
 
-const Promotions = require('../models/promotions')
+const Promotions = require('../models/promotions');
+
+const authenticate = require('../authenticate');
 
 promoRouter.use(bodyParser.json());
 
@@ -32,7 +36,7 @@ try {
 
 })
 
-.post( async(req,res,next)=>{
+.post(authenticate.verifyUser, async(req,res,next)=>{
    try {
     const promotion = await Promotions.create(req.body);
 
@@ -52,7 +56,7 @@ try {
    }
     
 })
-.put((req,res,next)=>{
+.put(authenticate.verifyUser,(req,res,next)=>{
 
     res.statusCode = 403; //operation not supported
 
@@ -61,7 +65,7 @@ try {
 
 })
 
-.delete(async(req,res,next)=>{
+.delete(authenticate.verifyUser,async(req,res,next)=>{
 
     try {
         
@@ -106,12 +110,12 @@ promoRouter.route('/:promoId')
 
 })
 
-.post((req,res,next)=>{
+.post(authenticate.verifyUser,(req,res,next)=>{
     res.statusCode = 403; //operation not supported
     res.end("Post operation not supported on /promotions/" + req.params.promoId);
 })
 
-.put(async(req,res,next)=>{
+.put(authenticate.verifyUser,async(req,res,next)=>{
     try {
 
         res.setHeader('Content-Type','application/json');
@@ -138,7 +142,7 @@ promoRouter.route('/:promoId')
 
 
 })
-.delete(async(req,res,next)=>{
+.delete(authenticate.verifyUser,async(req,res,next)=>{
 try {
     const promotion = await Promotions.findByIdAndRemove(req.params.promoId);
 
