@@ -33,7 +33,7 @@ leaderRouter.route('/')
     }
 })
 
-.post(cors.corsWithOptions,authenticate.verifyUser,async(req,res,next)=>{
+.post(cors.corsOptions,authenticate.verifyUser,async(req,res,next)=>{
     try {
         const leaders = await Leaders.create(req.body);
     
@@ -52,13 +52,13 @@ leaderRouter.route('/')
     
        }
 })
-.put(cors.corsWithOptions,authenticate.verifyUser,(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
     res.statusCode = 403; //operation not supported
     res.end("Put operation not supported on /leaders");
 
 })
 
-.delete(cors.corsWithOptions,authenticate.verifyUser,async(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,async(req,res,next)=>{
     try {
         
         const leaders = await Leaders.remove({});
@@ -106,7 +106,7 @@ leaderRouter.route('/:leaderId')
     res.statusCode = 403; //operation not supported
     res.end("Post operation not supported on /leaders/" + req.params.leaderId);
 })
-.put(cors.corsWithOptions,authenticate.verifyUser,async(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,async(req,res,next)=>{
 
     try {
 
