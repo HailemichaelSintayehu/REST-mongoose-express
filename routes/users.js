@@ -85,7 +85,7 @@ router.post('/login',cors.corsOptions,passport.authenticate('local'),(req,res,ne
     token:token,
     success:true
 
-  })
+  });
 
 });
 
@@ -106,7 +106,18 @@ router.get("/logout",cors.corsOptions,(res,req,next)=>{
 })
 router.get('/facebook/token',passport.authenticate('facebook-token'),(req,res)=>{
   if(req.user){
-    
+    var token = authenticate.getToken({_id:req.user._id});
+    res.statusCode = 200;
+
+    res.setHeader('Content-Type','application/json');
+  
+    res.json({
+  
+      status:'You are Successfully logged in',
+      token:token,
+      success:true
+  
+    });
   }
 })
 module.exports = router;
