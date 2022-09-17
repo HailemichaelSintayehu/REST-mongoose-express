@@ -21,7 +21,7 @@ router.get('/', function(req, res, next) {
 
 });
 
-router.post('/signup',(req,res,next)=>{
+router.post('/signup',cors.corsOptions,(req,res,next)=>{
 
     User.register(new User({username:req.body.username}),
     
@@ -71,7 +71,7 @@ router.post('/signup',(req,res,next)=>{
   });
 });
  
-router.post('/login',passport.authenticate('local'),(req,res,next)=>{
+router.post('/login',cors.corsOptions,passport.authenticate('local'),(req,res,next)=>{
 
   var token = authenticate.getToken({_id:req.user._id});
 
@@ -89,7 +89,7 @@ router.post('/login',passport.authenticate('local'),(req,res,next)=>{
 
 });
 
-router.get("/logout",(res,req,next)=>{
+router.get("/logout",cors.corsOptions,(res,req,next)=>{
   if(req.session){
 
     req.session.destroy();
@@ -104,5 +104,9 @@ router.get("/logout",(res,req,next)=>{
 
   }
 })
-
+router.get('/facebook/token',passport.authenticate('facebook-token'),(req,res)=>{
+  if(req.user){
+    
+  }
+})
 module.exports = router;
