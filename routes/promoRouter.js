@@ -10,11 +10,17 @@ const Promotions = require('../models/promotions');
 
 const authenticate = require('../authenticate');
 
+const cors = require('./cors');
+
 promoRouter.use(bodyParser.json());
 
 promoRouter.route('/')
 
-.get( async (req,res)=>{
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
+
+.get( cors.cors,async (req,res)=>{
 
 try {
     const promotion = await Promotions.find({});
@@ -36,7 +42,7 @@ try {
 
 })
 
-.post(authenticate.verifyUser, async(req,res,next)=>{
+.post(cors.corsOptions,authenticate.verifyUser, async(req,res,next)=>{
    try {
     const promotion = await Promotions.create(req.body);
 
@@ -56,7 +62,7 @@ try {
    }
     
 })
-.put(authenticate.verifyUser,(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     res.statusCode = 403; //operation not supported
 
@@ -65,7 +71,7 @@ try {
 
 })
 
-.delete(authenticate.verifyUser,async(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,async(req,res,next)=>{
 
     try {
         
@@ -88,7 +94,11 @@ try {
 
 promoRouter.route('/:promoId')
 
-.get(async(req,res)=>{
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
+
+.get(cors.cors,async(req,res)=>{
     try {
 
         res.setHeader('Content-Type','application/json');
@@ -110,12 +120,12 @@ promoRouter.route('/:promoId')
 
 })
 
-.post(authenticate.verifyUser,(req,res,next)=>{
+.post(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
     res.statusCode = 403; //operation not supported
     res.end("Post operation not supported on /promotions/" + req.params.promoId);
 })
 
-.put(authenticate.verifyUser,async(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,async(req,res,next)=>{
     try {
 
         res.setHeader('Content-Type','application/json');
@@ -142,7 +152,7 @@ promoRouter.route('/:promoId')
 
 
 })
-.delete(authenticate.verifyUser,async(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,async(req,res,next)=>{
 try {
     const promotion = await Promotions.findByIdAndRemove(req.params.promoId);
 
@@ -160,4 +170,4 @@ try {
 }
 });
 
-module.exports = promoRouter; 
+module.exports = promoRouter;    

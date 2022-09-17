@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 
 const authenticate = require('../authenticate');
 
+const cors = require('./cors');
+
 const leaderRouter = express.Router();
 
 leaderRouter.use(bodyParser.json());
@@ -13,8 +15,11 @@ leaderRouter.use(bodyParser.json());
 const Leaders = require('../models/leaders');
 
 leaderRouter.route('/')
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
 
-.get( async(req,res)=>{
+.get(cors.cors, async(req,res)=>{
     try {
 
         const leaders = await Leaders.find({});   
@@ -28,7 +33,7 @@ leaderRouter.route('/')
     }
 })
 
-.post(authenticate.verifyUser,async(req,res,next)=>{
+.post(cors.corsWithOptions,authenticate.verifyUser,async(req,res,next)=>{
     try {
         const leaders = await Leaders.create(req.body);
     
@@ -47,13 +52,13 @@ leaderRouter.route('/')
     
        }
 })
-.put(authenticate.verifyUser,(req,res,next)=>{
+.put(cors.corsWithOptions,authenticate.verifyUser,(req,res,next)=>{
     res.statusCode = 403; //operation not supported
     res.end("Put operation not supported on /leaders");
 
 })
 
-.delete(authenticate.verifyUser,async(req,res,next)=>{
+.delete(cors.corsWithOptions,authenticate.verifyUser,async(req,res,next)=>{
     try {
         
         const leaders = await Leaders.remove({});
@@ -73,7 +78,11 @@ leaderRouter.route('/')
 
 leaderRouter.route('/:leaderId')
 
-.get(async(req,res)=>{
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
+
+.get(cors.cors,async(req,res)=>{
     try {
 
         res.setHeader('Content-Type','application/json');
@@ -93,11 +102,11 @@ leaderRouter.route('/:leaderId')
     }
 })
 
-.post(authenticate.verifyUser,(req,res,next)=>{
+.post(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
     res.statusCode = 403; //operation not supported
     res.end("Post operation not supported on /leaders/" + req.params.leaderId);
 })
-.put(authenticate.verifyUser,async(req,res,next)=>{
+.put(cors.corsWithOptions,authenticate.verifyUser,async(req,res,next)=>{
 
     try {
 
@@ -122,7 +131,7 @@ leaderRouter.route('/:leaderId')
     }
 
 })
-.delete(authenticate.verifyUser,async(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,async(req,res,next)=>{
     try {
         const leaders = await Leaders.findByIdAndRemove(req.params.leaderId);
     

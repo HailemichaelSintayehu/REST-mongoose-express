@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 
 const authenticate = require('../authenticate');
 
+const cors = require('./cors');
+
 const multer = require('multer');
 
 var storage = multer.diskStorage({
@@ -31,21 +33,25 @@ uploadRouter.use(bodyParser.json());
 
 uploadRouter.route('/')
 
-.get(authenticate.verifyUser,(req,res,next)=>{
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
+
+.get(cors.cors,authenticate.verifyUser,(req,res,next)=>{
 
     // res.statusCode = 403; //operation not supported
 
     res.status(403).end("Get operation not supported on /imageUpload");
 
 })
-.post(authenticate.verifyUser,upload.single('imageFile'),(req,res)=>{
+.post(cors.corsOptions,authenticate.verifyUser,upload.single('imageFile'),(req,res)=>{
 
     res.statusCode = 200;
     res.setHeader("Content-Type","application/json");
-    res.json(req.file);
+    res.json(req.file); 
     
 })
-.put(authenticate.verifyUser,(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     // res.statusCode = 403; //operation not supported
 
@@ -53,7 +59,7 @@ uploadRouter.route('/')
 
 })
 
-.delete(authenticate.verifyUser,(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     // res.statusCode = 403; //operation not supported
 

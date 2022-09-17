@@ -8,13 +8,17 @@ const Dishes = require('../models/dishes');
 
 const authenticate = require('../authenticate');
 
+const cors = require('./cors');
+
 const dishRouter = express.Router();
 
 dishRouter.use(bodyParser.json());
 
 dishRouter.route('/')
-
-.get((req,res,next)=>{
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
+.get(cors.cors,(req,res,next)=>{
 
     Dishes.find({})
 
@@ -32,7 +36,7 @@ dishRouter.route('/')
 
 })
 
-.post(authenticate.verifyUser,(req,res,next)=>{
+.post(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
     Dishes.create(req.body)
 
     .then((dish)=>{
@@ -49,7 +53,7 @@ dishRouter.route('/')
     
 })
 
-.put(authenticate.verifyUser,(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     // res.statusCode = 403; //operation not supported
 
@@ -57,7 +61,7 @@ dishRouter.route('/')
 
 })
 
-.delete(authenticate.verifyUser,(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     Dishes.remove({})
 
@@ -74,8 +78,10 @@ dishRouter.route('/')
 });
 
 dishRouter.route('/:dishId')
-
-.get((req,res,next)=>{
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
+.get(cors.cors,(req,res,next)=>{
 
     Dishes.findById(req.params.dishId)
 
@@ -93,14 +99,14 @@ dishRouter.route('/:dishId')
 
 })
 
-.post(authenticate.verifyUser,(req,res,next)=>{
+.post(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     res.statusCode = 403; //operation not supported
 
     res.end("Post operation not supported on /dishes/" + req.params.dishId);
 
 })
-.put(authenticate.verifyUser,(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     Dishes.findByIdAndUpdate(req.params.dishId,{
 
@@ -120,7 +126,7 @@ dishRouter.route('/:dishId')
 
 
 })
-.delete(authenticate.verifyUser,(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     Dishes.findByIdAndRemove(req.params.dishId)
 
@@ -137,7 +143,10 @@ dishRouter.route('/:dishId')
 
 dishRouter.route('/:dishId/comments')
 
-.get((req,res,next)=>{
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
+.get(cors.cors,(req,res,next)=>{
 
     Dishes.findById(req.params.dishId)
 
@@ -165,7 +174,7 @@ dishRouter.route('/:dishId/comments')
 
 })
 
-.post(authenticate.verifyUser,(req,res,next)=>{
+.post(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     Dishes.findById(req.params.dishId)
 
@@ -212,14 +221,14 @@ dishRouter.route('/:dishId/comments')
     
 })
 
-.put(authenticate.verifyUser,(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
     // res.statusCode = 403; //operation not supported
 
     res.status(403).end("Put operation not supported on /dishes/" + req.params.dishId + '/comments');
 
 })
 
-.delete(authenticate.verifyUser,(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
     Dishes.findById(req.params.dishId)
 
     .then((dish)=>{
@@ -258,8 +267,10 @@ dishRouter.route('/:dishId/comments')
 });
 
 dishRouter.route('/:dishId/comments/:commentId')
-
-.get((req,res,next)=>{
+.options(cors.corsOptions,(req,res) =>{
+    res.sendStatus(200);
+})
+.get(cors.cors,(req,res,next)=>{
 
     Dishes.findById(req.params.dishId)
 
@@ -298,7 +309,7 @@ dishRouter.route('/:dishId/comments/:commentId')
 
 })
 
-.post(authenticate.verifyUser,(req,res,next)=>{
+.post(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
     res.statusCode = 403; //operation not supported
 
     res.end("Post operation not supported on /dishes/" + req.params.dishId + 
@@ -306,7 +317,7 @@ dishRouter.route('/:dishId/comments/:commentId')
 
 })
 
-.put(authenticate.verifyUser,(req,res,next)=>{
+.put(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
     Dishes.findById(req.params.dishId)
 
@@ -369,7 +380,7 @@ dishRouter.route('/:dishId/comments/:commentId')
 
 })
 
-.delete(authenticate.verifyUser,(req,res,next)=>{
+.delete(cors.corsOptions,authenticate.verifyUser,(req,res,next)=>{
 
    Dishes.findById(req.params.dishId)
 

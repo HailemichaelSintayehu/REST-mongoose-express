@@ -8,6 +8,8 @@ var passport = require('passport');
 
 const authenticate  = require('../authenticate');
 
+var cors = require('./cors')
+
 var router = express.Router();
 
 router.use(bodyParser.json());
